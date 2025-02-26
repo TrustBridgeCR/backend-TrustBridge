@@ -3,9 +3,10 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import passport from './config/passport';
 import loanRoutes from './routes/loanRoutes';
+import auditRoutes from './routes/auditRoutes';
 import authRoutes from './routes/authRoutes';
 import blockchainService from './services/blockchainService';
-import { isAuthenticated } from './middleware/auth';
+import { isAuthenticated, isLender } from './middleware/auth';
 
 dotenv.config();
 const app = express();
@@ -40,6 +41,7 @@ app.get('/health', async (req, res) => {
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/loans', isAuthenticated, loanRoutes); // Protect loan routes
+app.use('/api/audit', isLender, auditRoutes); // Protect audit routes
 
 // Error handling middleware
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
